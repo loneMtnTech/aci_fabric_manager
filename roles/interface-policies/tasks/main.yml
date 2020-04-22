@@ -1,0 +1,82 @@
+---
+- name: Create apic connection profile
+  set_fact:
+    login: &aci_login
+      host: '{{ansible_host}}'
+      use_proxy: "{{apic_proxy | default('no')}}"
+      validate_certs: "{{apic_validate_certs | default('no')}}"
+      use_ssl: "{{apic_use_ssl | default('yes')}}"
+      private_key: "../{{varprompt_private_key}}"
+      #certificate_name: admin
+    intentMap:
+      add: present
+      remove: absent
+
+- name: "{{intent}} INTERFACE POLCIES"
+  aci_interface_policy_cdp:
+    <<: *aci_login
+    cdp_policy: "cdp-{{item}}"
+    admin_state: "{{item}}"
+    state: "{{intentMap[intent]}}"
+  loop: ["true","false"]
+  loop_control:
+    label: "{{intent}} cdp-{{item}} policy"
+- aci_interface_policy_lldp:
+    <<: *aci_login
+    lldp_policy: "lldp-{{item}}"
+    receive_state: "{{item}}"
+    state: "{{intentMap[intent]}}"
+  loop: ["true","false"]
+  loop_control:
+    label: "{{intent}} lldp-{{item}} policy"
+- aci_interface_policy_mcp:
+    <<: *aci_login
+    mcp: "mcp-{{item}}"
+    admin_state: "{{item}}"
+    state: "{{intentMap[intent]}}"
+  loop: ["true","false"]
+  loop_control:
+    label: "{{intent}} mcp-{{item}} policy"
+- aci_rest:
+    <<: *aci_login
+    method: post
+    path: "/api/node/mo/uni/infra/hintfpol-{{item}}.json"
+    content:
+      fabricHIfPol:
+        attributes:
+          name: "{{item}}"
+          speed: "{{'inherit' if item == 'auto' else item}}"
+  loop: [auto,1G,10G]
+  loop_control:
+    label: "{{intent}} link policy {{item}}"
+- aci_rest:
+    <<: *aci_login
+    method: post
+    path: "/api/node/mo/uni/infra/ifPol-bpdu-guard-{{item}}.json"
+    content:
+      stpIfPol:
+        attributes:
+          name: "bpdu-guard-{{item}}"
+          ctrl: bpdu-guard
+  loop: ["true","false"]
+  loop_control:
+    label: "{{intent}} stp policy bpdu-guard-{{item}}"
+#INT POLICY GROUPS
+  #
+  #
+- name: "{{intent}} INTERFACE POLICY GROUPS"
+  aci_interface_policy_leaf_policy_group:
+    <<: *aci_login
+    policy_group: "{{item.name}}"
+    description: "{{item.description|default(omit)}}"
+    cdp_policy: "{{item.cdp_policy}}"
+    lldp_policy: "{{item.lldp_policy}}"
+    mcp_policy: "{{item.mcp_policy}}"
+    link_level_policy: "{{item.speed}}"
+    stp_interface_policy: "{{item.stp_policy}}"
+    aep: "{{item.aep}}"
+    lag_type: "{{item.lag_type}}"
+    state: "{{intentMap[intent]}}"
+  loop: "{{intPolicyGroups}}"
+  loop_control:
+    label: "{{intent}} interface policy {{item.name}}"

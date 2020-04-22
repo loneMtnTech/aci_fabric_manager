@@ -1,0 +1,79 @@
+---
+- name: Create apic connection profile
+  set_fact:
+    login: &aci_login
+      host: '{{ansible_host}}'
+      use_proxy: "{{apic_proxy | default('no')}}"
+      validate_certs: "{{apic_validate_certs | default('no')}}"
+      use_ssl: "{{apic_use_ssl | default('yes')}}"
+      private_key: "../{{varprompt_private_key}}"
+      #certificate_name: admin
+    intentMap:
+      add: present
+      remove: absent
+
+- name: "{{intent}} VLAN POOLS"
+  aci_vlan_pool:
+    <<: *aci_login
+    pool: "{{item.name}}"
+    pool_allocation_mode: "{{item.alloc}}"
+    state: "{{intentMap[intent]}}"
+  loop: "{{ vlanPools }}"
+  loop_control:
+    label: "{{intent}} vlan pool {{item.name}}"
+- name: "{{intent}} VLANS to POOLS"
+  aci_vlan_pool_encap_block:
+    <<: *aci_login
+    pool: "{{item.0.name}}"
+    pool_allocation_mode: "{{item.0.alloc}}"
+    block_name: "{{item.0.name}}"
+    block_start: "{{item.1.blockStart}}"
+    block_end: "{{item.1.blockEnd}}"
+    state: "{{intentMap[intent]}}"
+  loop: "{{vlanPools|subelements('vlans')}}"
+  loop_control:
+    label: >-
+      "{{intent}} vlan  {{item.1.blockStart}}
+      to {{item.1.blockEnd}} to {{item.0.name}} vlan pool"
+- name: "{{intent}} DOMAINS"
+  aci_domain:  
+    <<: *aci_login
+    domain: "{{item.name}}"
+    domain_type: "{{item.domain_type}}"
+    vm_provider: "{{item.vm_provider|default(omit)}}"
+    state: "{{intentMap[intent]}}"
+  loop: "{{domains}}"
+  loop_control:
+    label: "{{intent}} DOMAIN {{item.name}}"
+- name: Create AEPS
+  aci_aep:
+    <<: *aci_login
+    aep: "{{item.name}}"
+    state: "{{intentMap[intent]}}"
+  loop: "{{aeps}}"
+  loop_control:
+    label: "{{intent}} aep {{item.name}}"
+
+- name: "{{intent}} AEP to DOMAINS"
+  aci_aep_to_domain:
+    <<: *aci_login
+    aep: "{{item.0.name}}"
+    domain: "{{item.1.name}}"
+    domain_type: "{{item.1.domain_type}}"
+    vm_provider: "{{item.1.vm_provider|default(omit)}}"
+    state: "{{intentMap[intent]}}"
+  loop: "{{aeps|subelements('domains')}}"
+  loop_control:
+    label: "connecting {{item.0.name}} to  {{item.1.name}} domain"
+- name: "{{intent}} DOMAINS to VLAN POOLS"
+  aci_domain_to_vlan_pool:
+    <<: *aci_login
+    domain: "{{item.name}}"
+    domain_type: "{{item.domain_type}}"
+    pool: "{{item.vlan.name}}"
+    pool_allocation_mode: "{{item.vlan.alloc}}"
+    vm_provider: "{{item.vm_provider|default(omit)}}"
+    state: "{{intentMap[intent]}}"
+  loop: "{{domains}}"
+  loop_control:
+    label: "{{intent}} {{item.vlan.name}} vlan pool to {{item.name}} domain"
