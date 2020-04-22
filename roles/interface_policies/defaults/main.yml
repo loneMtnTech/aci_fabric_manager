@@ -1,0 +1,21 @@
+---
+intPolicyGroups:
+
+- name: esx-host
+  description: |-
+    Use for vmware hosts in active/passive mac-pinning
+  cdp_policy: cdp-true
+  lldp_policy: lldp-true
+  mcp_policy: mcp-true
+  stp_policy: bpdu-guard-true
+  speed: auto
+  aep:  vmware
+  lag_type: leaf
+- name: phy-server
+  cdp_policy: cdp-false
+  lldp_policy: lldp-false
+  mcp_policy: mcp-true
+  stp_policy: bpdu-guard-true
+  speed: auto
+  aep:  phy
+  lag_type: leaf
