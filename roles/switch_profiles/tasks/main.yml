@@ -61,7 +61,7 @@
     leaf: "{{ item | string }}"
     leaf_node_blk: "{{ item | string }}"
     from: "{{ item }}"
-    to: "{{ item + 1 }}"
+    to: "{{ item }}"
     state: "{{ intentMap[intent] }}"
   loop: "{{ range(leafStart,leafEnd + 1)|list }}"
   loop_control:
