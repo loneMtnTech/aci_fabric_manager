@@ -6,13 +6,16 @@ It is a framework that takes some liberties that you must accept to use.  It is 
 
 *framework maxims*
 
-* Switch profile = interface profile topology
+![fabric policies](/images/fabric_policies.JPG)
+
+* Switch profile = interface profile
     * You set the start and end range of your leaf nodes, it will deploy the single and vpc pair of switch profiles
-    * Format for those is *nodeId* and *nodeId-nodeId*
-* Int Policies aren't included in var files, the are hardset in the playbook because the are just on/off switches
-    * Format for those are all lower case with - separate.  ex: cdp-true, cdp-false
-and int profiles
-![switch policies](/images/fabric_policies.JPG)
+    * Format for those is *nodeId* and *nodeId-nodeId*.  For example, if you have 4 leafs and you start at 200 for the node id
+    you will get: 200,200-201,201,202,202-203,203.
+    * Control the relationship between domains,pool, and aeps in the variable file via yaml anchors
+    * Int Selectors are not created by the roles, this is handled via a playbook that will be added to this collection later.  The idea is to provide an interface for the team racking and stacking that would deploy the Int Sel since they are the one who knows where it is plugged in
+
+![switch profiles](/images/switch_profiles.JPG)
 
 
 ## Requirements
@@ -23,11 +26,11 @@ and int profiles
     * https://docs.ansible.com/ansible/latest/scenario_guides/guide_aci.html#signature-based-authentication-using-certificates
 
 ## Installation
-Ansible must be installed.  I will only be testing against python3
+Ansible must be installed.
 
 ```pip3 install ansible```
 
-Installation via galaxy with download any collections this collection depends on if its not already installed
+Installation via galaxy will download any collections this collection depends on if its not already installed.  Use --force to upgrade to latest version
 
 ```ansible-galaxy collection install lonemtntech.aci_fabric_policies```
 
@@ -38,10 +41,8 @@ I would encourage a first deployment to a sandbox with the default settings to s
 There are 2 required variables to be set on the main playbook
 * intent - controls if infrastructure is deployed or deleted
 * varprompt_private_key - controls auth to aci.
-    * should name as *username.key*
+    * should name as *username.key* same as your aci username
     * place in same directory as your root playbook.
-
-
 
 example playbook
 
@@ -66,12 +67,14 @@ example playbook
 
 ## Customization
 
-while you can modify the roles directly its designed to be modified via variables.
-You can access the default yaml variable files inside the collection.  The default path is
+Designed to be modified via variables.
+If you have installed via galaxy you can access the default yaml variable files inside each role.  The default path is
 
 `~/.ansible/collections/ansible_collections/lonemtntech`
 
-You will find the default files inside /roles/rolename/default/main.yml. copy that to your inventory variables and any changes you make will override the defaults.
+You will find the default files inside /roles/*rolename*/default/main.yml
+The easiest way to customize is to create a [host_vars folder](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#organizing-host-and-group-variables),paste in the default yaml file from the role then make changes
+
 I do make use of yaml anchors to add links between variables.  For example, a domain can reference a vlan pool this way.  The rest is standard yaml
 
 ```
