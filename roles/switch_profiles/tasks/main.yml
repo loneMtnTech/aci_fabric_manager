@@ -83,3 +83,7 @@
   loop: "{{ range(leafStart,leafEnd + 1)|list }}"
   loop_control:
     label: "{{ intent }} int profile {{ item }} to switch profile {{ item }}"
+- name: FEX configuration
+  include_tasks:
+    file: fex.yml
+  when: fexLeaf

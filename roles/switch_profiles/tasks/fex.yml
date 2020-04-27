@@ -1,0 +1,33 @@
+---
+- name: Create apic connection profile
+  set_fact:
+    login: &aci_login
+      host: "{{ ansible_host }}"
+      use_proxy: "{{ apic_proxy | default('no') }}"
+      validate_certs: "{{ apic_validate_certs | default('no') }}"
+      use_ssl: "{{ apic_use_ssl | default('yes') }}"
+      private_key: "{{ playbook_dir }}/{{ varprompt_private_key }}"
+      #certificate_name: admin
+    intentMap:
+      add: present
+      remove: absent
+- aci_rest:
+    <<: *aci_login
+    method: post
+    path: "/api/node/mo/uni/infra/fexprof-{{ item }}-fex.json"
+    content:
+      infraFexP:
+        attributes:
+          name: "{{ item }}-fex"
+          status: "{{ 'created,modified' if intent == 'add' else 'deleted' }}"
+        children:
+        - infraFexBndlGrp:
+            attributes:
+              rn: "fexbundle-{{ item }}-fex"
+              name: "{{ item }}-fex"
+              status: "{{ 'created,modified' if intent == 'add' else 'deleted' }}"
+  loop: "{{fexLeaf}}"
+  loop_control:
+    label: "{{ intent }} fex profile {{ item }}"
+
+
