@@ -1,21 +1,18 @@
 # Ansible Collection for Cisco ACI Access Policies
-A framework to deploy cisco ACI access policies
+A framework to deploy cisco ACI fabric access policies
 
 The collection includes roles and playbooks to achieve a uniform and quickly deployed fabric.
-It is a framework that takes some liberties that you must accept to use.  It is customizable via varibles
+It is a framework.  The number #1 rule of frameworks is 'don't fight the framework".  That means if you are deploying a different type of fabric this may not work at all for you.
 
-*framework maxims*
+## Features
+
+* Creates your vlan pools, domains, aeps and connects them based on your variable set. [See Role](/roles/domains_pools_aeps/README.md)
+* Creates your Switch and Int Profiles.  [See Role](/roles/switch_profiles/README.md)
+* Creates your Interface policies and groups .  [See Role](/roles/interface_policies/README.md)
+
+## Example
 
 ![fabric policies](/images/fabric_policies.JPG)
-
-* Switch profile = interface profile
-    * You set the start and end range of your leaf nodes, it will deploy the single and vpc pair of switch profiles
-    * Format for those is *nodeId* and *nodeId-nodeId*.  For example, if you have 4 leafs and you start at 200 for the node id
-    you will get: 200,200-201,201,202,202-203,203.
-    * Control the relationship between domains,pool, and aeps in the variable file via yaml anchors
-    * Int Selectors are not created by the roles, this is handled via a playbook that will be added to this collection later.  The idea is to provide an interface for the team racking and stacking that would deploy the Int Sel since they are the one who knows where it is plugged in
-
-![switch profiles](/images/switch_profiles.JPG)
 
 
 ## Requirements
@@ -35,8 +32,9 @@ Installation via galaxy will download any collections this collection depends on
 ```ansible-galaxy collection install lonemtntech.aci_fabric_policies```
 
 
-## Configuration
-I would encourage a first deployment to a sandbox with the default settings to see how the project is designed to be deployed.
+## Deployment
+
+**Please test against a sandbox first**
 
 There are 2 required variables to be set on the main playbook
 * intent - controls if infrastructure is deployed or deleted
@@ -65,7 +63,7 @@ example playbook
   - role: switch_profiles
 ```
 
-## Customization
+## Configuration
 
 Designed to be modified via variables.
 If you have installed via galaxy you can access the default yaml variable files inside each role.  The default path is
@@ -75,7 +73,9 @@ If you have installed via galaxy you can access the default yaml variable files 
 You will find the default files inside /roles/*rolename*/default/main.yml
 The easiest way to customize is to create a [host_vars folder](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#organizing-host-and-group-variables),paste in the default yaml file from the role then make changes
 
-I do make use of yaml anchors to add links between variables.  For example, a domain can reference a vlan pool this way.  The rest is standard yaml
+yaml anchors are used sometime to add relationship between obj in the variable files.  For example, a domain can reference a vlan pool this way.  The rest is standard yaml
+
+*anchor example map prodVlanPool inside the vlan mapping of prod domain*
 
 ```
 vlanPools:
@@ -93,6 +93,5 @@ domains:
   vlan:
     *prodVlanPool
 ```
-This allows me to place the vlanPools object inside the vlan mapping inside the domain
 
-Most of the plays in the roles are loops so you can create however many domains you want and they will be created accordingly
+Almost all plays in the roles are loops so you can create however many domains,vlanPools, aeps, switches, etc that you want and they will be created according to your inventory variable file
