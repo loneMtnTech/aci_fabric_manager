@@ -13,14 +13,14 @@
       remove: absent
 
 - name: "{{ intent }} INTERFACE PROFILES"
-  aci_interface_policy_leaf_profile:
+  cisco.aci.aci_interface_policy_leaf_profile:
     <<: *aci_login
     leaf_interface_profile: "{{ '%s-%s' | format(item,item+1) }}"
     state: "{{ intentMap[intent] }}"
   loop: "{{ range(leafStart,leafEnd + 1,2)|list }}"
   loop_control:
     label: "{{ intent }} interface profile {{ '%s-%s' | format(item,item+1) }}"
-- aci_interface_policy_leaf_profile:
+- cisco.aci.aci_interface_policy_leaf_profile:
     <<: *aci_login
     leaf_interface_profile: "{{ item | string }}"
     state: "{{ intentMap[intent] }}"
@@ -29,14 +29,14 @@
     label: "{{ intent }} interface profile {{ item }}"
 
 - name: "{{ intent }} SWITCH PROFILES"
-  aci_switch_policy_leaf_profile:
+  cisco.aci.aci_switch_policy_leaf_profile:
     <<: *aci_login
     leaf_profile: "{{ '%s-%s' | format(item,item+1) }}"
     state: "{{ intentMap[intent] }}"
   loop: "{{ range(leafStart,leafEnd + 1,2)|list }}"
   loop_control:
     label: "{{ intent }} {{ '%s-%s' | format(item,item+1) }} policy"
-- aci_switch_policy_leaf_profile:
+- cisco.aci.aci_switch_policy_leaf_profile:
     <<: *aci_login
     leaf_profile: "{{ item | string }}"
     state: "{{ intentMap[intent] }}"
@@ -44,7 +44,7 @@
   loop_control:
     label: "{{ intent }} {{ item | string }} policy"
 - name: "{{ intent }} SWITCH PROFILE to LEAFS"
-  aci_switch_leaf_selector:
+  cisco.aci.aci_switch_leaf_selector:
     <<: *aci_login
     leaf_profile: "{{ '%s-%s' | format(item,item+1) }}"
     leaf: "{{ '%s-%s' | format(item,item+1) }}"
@@ -55,7 +55,7 @@
   loop: "{{ range(leafStart,leafEnd + 1,2)|list }}"
   loop_control:
     label: "{{ intent }} switch profile {{ '%s-%s' | format(item,item+1) }} to nodes {{ item }} and {{ item + 1 }}"
-- aci_switch_leaf_selector:
+- cisco.aci.aci_switch_leaf_selector:
     <<: *aci_login
     leaf_profile: "{{ item | string }}"
     leaf: "{{ item | string }}"
@@ -67,7 +67,7 @@
   loop_control:
     label: "{{ intent }} switch profile {{ item | string }} to node {{ item }}"
 - name: "{{ intent }} INTERFACE PROFILE to SWITCH PROFILE"
-  aci_interface_selector_to_switch_policy_leaf_profile:
+  cisco.aci.aci_interface_selector_to_switch_policy_leaf_profile:
     <<: *aci_login
     leaf_profile: "{{ '%s-%s' | format(item,item+1) }}"
     interface_selector: "{{ '%s-%s' | format(item,item+1) }}"
@@ -75,7 +75,7 @@
   loop: "{{ range(leafStart,leafEnd + 1,2)|list }}"
   loop_control:
     label: "{{ intent }} {{ 'int profile %s-%s to switch profile %s-%s' | format(item,item+1,item,item+1) }}"
-- aci_interface_selector_to_switch_policy_leaf_profile:
+- cisco.aci.aci_interface_selector_to_switch_policy_leaf_profile:
     <<: *aci_login
     leaf_profile: "{{ item | string }}"
     interface_selector: "{{ item | string }}"

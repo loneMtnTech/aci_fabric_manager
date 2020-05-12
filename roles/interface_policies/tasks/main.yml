@@ -11,9 +11,8 @@
     intentMap:
       add: present
       remove: absent
-
 - name: "{{ intent }} INTERFACE POLCIES"
-  aci_interface_policy_cdp:
+  cisco.aci.aci_interface_policy_cdp:
     <<: *aci_login
     cdp_policy: "cdp-{{ item }}"
     admin_state: "{{ item }}"
@@ -21,7 +20,7 @@
   loop: ["true", "false"]
   loop_control:
     label: "{{ intent }} cdp-{{ item }} policy"
-- aci_interface_policy_lldp:
+- cisco.aci.aci_interface_policy_lldp:
     <<: *aci_login
     lldp_policy: "lldp-{{ item }}"
     receive_state: "{{ item }}"
@@ -29,7 +28,7 @@
   loop: ["true", "false"]
   loop_control:
     label: "{{ intent }} lldp-{{ item }} policy"
-- aci_interface_policy_mcp:
+- cisco.aci.aci_interface_policy_mcp:
     <<: *aci_login
     mcp: "mcp-{{ item }}"
     admin_state: "{{ item }}"
@@ -37,7 +36,7 @@
   loop: ["true", "false"]
   loop_control:
     label: "{{ intent }} mcp-{{ item }} policy"
-- aci_rest:
+- cisco.aci.aci_rest:
     <<: *aci_login
     method: post
     path: "/api/node/mo/uni/infra/hintfpol-{{ item }}.json"
@@ -49,7 +48,7 @@
   loop: [auto, 1G, 10G]
   loop_control:
     label: "{{ intent }} link policy {{ item }}"
-- aci_rest:
+- cisco.aci.aci_rest:
     <<: *aci_login
     method: post
     path: "/api/node/mo/uni/infra/ifPol-bpdu-guard-{{ item }}.json"
@@ -65,7 +64,7 @@
 #
 #
 - name: "{{ intent }} INTERFACE POLICY GROUPS"
-  aci_interface_policy_leaf_policy_group:
+  cisco.aci.aci_interface_policy_leaf_policy_group:
     <<: *aci_login
     policy_group: "{{ item.name }}"
     description: "{{ item.description|default(omit) }}"

@@ -13,7 +13,7 @@
       remove: absent
 
 - name: "{{ intent }} VLAN POOLS"
-  aci_vlan_pool:
+  cisco.aci.aci_vlan_pool:
     <<: *aci_login
     pool: "{{ item.name }}"
     pool_allocation_mode: "{{ item.alloc }}"
@@ -22,7 +22,7 @@
   loop_control:
     label: "{{ intent }} vlan pool {{ item.name }}"
 - name: "{{ intent }} VLANS to POOLS"
-  aci_vlan_pool_encap_block:
+  cisco.aci.aci_vlan_pool_encap_block:
     <<: *aci_login
     pool: "{{ item.0.name }}"
     pool_allocation_mode: "{{ item.0.alloc }}"
@@ -36,7 +36,7 @@
       "{{ intent }} vlan  {{ item.1.blockStart }}
       to {{ item.1.blockEnd }} to {{ item.0.name }} vlan pool"
 - name: "{{ intent }} DOMAINS"
-  aci_domain:
+  cisco.aci.aci_domain:
     <<: *aci_login
     domain: "{{ item.name }}"
     domain_type: "{{ item.domain_type }}"
@@ -46,7 +46,7 @@
   loop_control:
     label: "{{ intent }} DOMAIN {{ item.name }}"
 - name: Create AEPS
-  aci_aep:
+  cisco.aci.aci_aep:
     <<: *aci_login
     aep: "{{ item.name }}"
     state: "{{ intentMap[intent] }}"
@@ -55,7 +55,7 @@
     label: "{{ intent }} aep {{ item.name }}"
 
 - name: "{{ intent }} AEP to DOMAINS"
-  aci_aep_to_domain:
+  cisco.aci.aci_aep_to_domain:
     <<: *aci_login
     aep: "{{ item.0.name }}"
     domain: "{{ item.1.name }}"
@@ -66,7 +66,7 @@
   loop_control:
     label: "connecting {{ item.0.name }} to  {{ item.1.name }} domain"
 - name: "{{ intent }} DOMAINS to VLAN POOLS"
-  aci_domain_to_vlan_pool:
+  cisco.aci.aci_domain_to_vlan_pool:
     <<: *aci_login
     domain: "{{ item.name }}"
     domain_type: "{{ item.domain_type }}"

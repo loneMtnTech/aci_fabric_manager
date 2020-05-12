@@ -11,7 +11,7 @@
     intentMap:
       add: present
       remove: absent
-- aci_rest:
+- cisco.aci.aci_rest:
     <<: *aci_login
     method: post
     path: "/api/node/mo/uni/infra/fexprof-{{ item }}-fex.json"
