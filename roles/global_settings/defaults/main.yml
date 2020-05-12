@@ -1,0 +1,12 @@
+---
+mcp: enabled #miscabling protocol
+mcpPass: "asdj;f;fjgia;ijdfg"
+domainValidation: "yes"
+remoteEpLearning: "no"
+enforceSubnetCheck: "yes"
+isisMetric: "32"
+bfd: enabled
+ipAging: enabled
+rogueEpCtrl: enabled
+forceCoopAuth: yes
+changeForwardingProfile: no
