@@ -1,0 +1,99 @@
+---
+
+- name: Verify variables are properly filled out
+  assert:
+    that:
+      - ntpServers
+      - dnsServers
+      - bgpAs
+      - routeReflectors
+    quiet: yes
+- name: Create apic connection profile
+  set_fact:
+    login: &aci_login
+      host: "{{ ansible_host }}"
+      use_proxy: "{{ apic_proxy | default('no') }}"
+      validate_certs: "{{ apic_validate_certs | default('no') }}"
+      use_ssl: "{{ apic_use_ssl | default('yes') }}"
+      private_key: "{{ playbook_dir }}/{{ varprompt_private_key }}"
+    intentMap:
+      add: present
+      remove: absent
+- name: |
+    "{{ intent }} dns servers
+    Fabric->Fabric Policies->Global->DNS Profiles"
+  cisco.aci.aci_rest:
+    <<: *aci_login
+    path: "/api/node/mo/uni/fabric/dnsp-default/prov-[{{ item }}].json"
+    method: post
+    content:
+      dnsProv:
+        attributes:
+          addr: "{{ item }}"
+          status: "{{ 'created,modified' if intent == 'add' else 'deleted' }}"
+  loop: "{{ dnsServers }}"
+  loop_control:
+    label: "{{ intent }} {{ item }}"
+- name: |
+    "{{ intent }} dns domains
+    Fabric->Fabric Policies->Global->DNS Profiles"
+  cisco.aci.aci_rest:
+    <<: *aci_login
+    path: "/api/node/mo/uni/fabric/dnsp-default/dom-{{ item }}.json"
+    method: post
+    content:
+      dnsDomain:
+        attributes:
+          name: "{{ item }}"
+          status: "{{ 'created,modified' if intent == 'add' else 'deleted' }}"
+  loop: "{{ dnsDomains }}"
+  loop_control:
+    label: "{{ intent }} {{ item }}"
+  when: dnsDomains is defined
+- name: |
+    "{{ intent }} NTP servers
+    Fabric->Fabric Policies->Polices->Pod->Date and Time"
+  cisco.aci.aci_rest:
+    <<: *aci_login
+    path: "/api/node/mo/uni/fabric/time-default/ntpprov-{{ item }}.json"
+    method: post
+    content:
+      datetimeNtpProv:
+        attributes:
+          name: "{{ item | string }}"
+          status: "{{ 'created,modified' if intent == 'add' else 'deleted' }}"
+        children:
+        - datetimeRsNtpProvToEpg:
+            attributes:
+              tDn: "uni/tn-mgmt/mgmtp-default/oob-{{ oobEpg }}"
+              status: "{{ 'created,modified' if intent == 'add' else 'deleted' }}"
+  loop: "{{ ntpServers }}"
+  loop_control:
+    label: "{{ intent }} {{ item }}"
+- name: |
+    "{{ intent }} BGP AS {{ bgpAs }}
+    System -> System Settings -> BGP Route Reflector"
+  cisco.aci.aci_rest:
+    <<: *aci_login
+    path: /api/node/mo/uni/fabric/bgpInstP-default/as.json
+    method: post
+    content:
+      bgpAsP:
+        attributes:
+          asn: "{{ bgpAs | string }}"
+          status: "{{ 'created,modified' if intent == 'add' else 'deleted' }}"
+- name: |
+    "{{ intent }} route reflectors
+    System -> System Settings -> BGP Route Reflector"
+  cisco.aci.aci_rest:
+    <<: *aci_login
+    path: "/api/node/mo/uni/fabric/bgpInstP-default/rr/node-{{ item }}.json"
+    method: post
+    content:
+      bgpRRNodePEp:
+        attributes:
+          id: "{{ item | string }}"
+          status: "{{ 'created,modified' if intent == 'add' else 'deleted' }}"
+  loop: "{{ routeReflectors }}"
+  loop_control:
+    label: "{{ intent }} {{ item }} as RR"

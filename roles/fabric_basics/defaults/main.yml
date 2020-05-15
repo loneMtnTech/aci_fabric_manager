@@ -1,0 +1,7 @@
+---
+bgpAs: ""
+ntpServers: []
+oobEpg: "default"
+dnsServers: []
+dnsDomains: []
+routeReflectors: []
