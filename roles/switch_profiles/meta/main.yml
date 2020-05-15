@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: switch_profiles
   author: Jason Bullen
   description: Configure switch and interface profiles
 

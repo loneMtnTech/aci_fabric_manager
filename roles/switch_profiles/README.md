@@ -11,15 +11,17 @@ Creates switch and interface profiles for a given range of nodes.Assumes leaf no
 104
 
 ## Fex support
-fex support creates a int profile such as 101-fex.  It assumes that 101-fex is attached to leaf 101.  There is no customization to this.  Also, leaf node ranges do not support the 200 range so this requires your leaf IDs to be in the 100 range to use this feature.
+fex support creates a int profile such as 101-fex.  It assumes that 101-fex is attached to leaf 101.  There is no customization to this.  Also, fex node ranges do not support the 200 range so this requires your leaf IDs to be in the 100 range to use this feature.
 
 
 Role Variables
 --------------
 
-leafStart(int): first node that is a leaf
+**Required Variables**
 
-leafEnd(int): last node that is a leaf
+**leafStart**(int): first node that is a leaf
+
+**leafEnd**(int): last node that is a leaf
 
 fexLeaf(list): leaf nodes that have fex attached.  Fex int profile will be named *nodeID-fex*
 

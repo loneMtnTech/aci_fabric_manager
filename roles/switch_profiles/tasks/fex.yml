@@ -26,7 +26,7 @@
               rn: "fexbundle-{{ item }}-fex"
               name: "{{ item }}-fex"
               status: "{{ 'created,modified' if intent == 'add' else 'deleted' }}"
-  loop: "{{fexLeaf}}"
+  loop: "{{ fexLeaf }}"
   loop_control:
     label: "{{ intent }} fex profile {{ item }}"
 

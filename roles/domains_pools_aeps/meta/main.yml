@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: domains_pools_aeps
   author: Jason Bullen
   description: Configure domains,vlan pools, and aeps
 
