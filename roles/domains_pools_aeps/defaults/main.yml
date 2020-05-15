@@ -5,19 +5,19 @@ vlanPools:
   alloc: static
   vlans:
   - blockStart: 1000
-    blockEnd: 1099
+    blockEnd: 1002
 - &devVlanPool
     name: dev
     alloc: static
     vlans:
     - blockStart: 50
-      blockEnd: 100
+      blockEnd: 52
 - &vmmVlanPool
   name: vmm
   alloc: dynamic
   vlans:
   - blockStart: 1500
-    blockEnd: 1800
+    blockEnd: 1502
 - &legacyPool
   name: legacy
   alloc: static
@@ -28,12 +28,12 @@ vlanPools:
     blockEnd: 501
   - blockStart: 502
     blockEnd: 502
-- &l3OutPool 
+- &l3OutPool
   name: l3-out
   alloc: static
   vlans:
   - blockStart: 4000
-    blockEnd: 4050
+    blockEnd: 4002
 domains:
 - &prodDomain
   name: prod
@@ -69,14 +69,12 @@ aeps:
 - name: vmware
   domains:
   - *vmwareDomain
-- name: l3out
+- name: l3-out
   domains:
   - *l3OutDomain
 - name: legacy
   domains:
   - *legacyDomain
-    
-
 
 
 
