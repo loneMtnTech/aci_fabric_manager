@@ -12,7 +12,9 @@
       add: present
       remove: absent
 
-- name: "{{ intent }} INTERFACE PROFILES"
+- name: |
+    "{{ intent }} INTERFACE PROFILES
+    Fabric->Access Policies->Interfaces->Leaf Interfaces->Profiles"
   cisco.aci.aci_interface_policy_leaf_profile:
     <<: *aci_login
     leaf_interface_profile: "{{ '%s-%s' | format(item,item+1) }}"
@@ -28,7 +30,9 @@
   loop_control:
     label: "{{ intent }} interface profile {{ item }}"
 
-- name: "{{ intent }} SWITCH PROFILES"
+- name: |
+    "{{ intent }} SWITCH PROFILES
+    Fabric->Access Policies->Switches->Leaf Switches->Profiles"
   cisco.aci.aci_switch_policy_leaf_profile:
     <<: *aci_login
     leaf_profile: "{{ '%s-%s' | format(item,item+1) }}"
@@ -83,7 +87,9 @@
   loop: "{{ range(leafStart,leafEnd + 1)|list }}"
   loop_control:
     label: "{{ intent }} int profile {{ item }} to switch profile {{ item }}"
-- name: FEX configuration
+- name: |
+    "FEX configuration
+    Fabric->Access Policies->Interfaces->Leaf Interfaces->Profiles"
   include_tasks:
     file: fex.yml
   when: fexLeaf

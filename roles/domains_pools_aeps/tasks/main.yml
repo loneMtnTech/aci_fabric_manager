@@ -12,7 +12,9 @@
       add: present
       remove: absent
 
-- name: "{{ intent }} VLAN POOLS"
+- name: |
+    "{{ intent }} VLAN POOLS
+    Fabric->Access Policies->Pools"
   cisco.aci.aci_vlan_pool:
     <<: *aci_login
     pool: "{{ item.name }}"
@@ -35,7 +37,9 @@
     label: >-
       "{{ intent }} vlan  {{ item.1.blockStart }}
       to {{ item.1.blockEnd }} to {{ item.0.name }} vlan pool"
-- name: "{{ intent }} DOMAINS"
+- name: |
+    "{{ intent }} DOMAINS
+    Fabric->Access Policies->Pysical and External Domains"
   cisco.aci.aci_domain:
     <<: *aci_login
     domain: "{{ item.name }}"
@@ -45,7 +49,9 @@
   loop: "{{ domains }}"
   loop_control:
     label: "{{ intent }} DOMAIN {{ item.name }}"
-- name: Create AEPS
+- name: |
+    "{{ intent }} AEPS
+    Fabric->Access Policies->Policies->Global->Attachable Access Entity Profiles"
   cisco.aci.aci_aep:
     <<: *aci_login
     aep: "{{ item.name }}"
