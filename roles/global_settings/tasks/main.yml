@@ -1,124 +1,127 @@
 ---
 # This playbook is for global best practices
 # Pulled from various sources
-
-- name: Create apic connection profile
-  set_fact:
-    login: &aci_login
-      host: "{{ ansible_host }}"
-      use_proxy: "{{ apic_proxy | default('no') }}"
-      validate_certs: "{{ apic_validate_certs | default('no') }}"
-      use_ssl: "{{ apic_use_ssl | default('yes') }}"
-      private_key: "{{ playbook_dir }}/{{ varprompt_private_key }}"
-      #certificate_name: admin
-    intentMap:
-      add: present
-      remove: absent
-- name: |
-    MCP (per Vlan) should be enabled – MisCabling Protocol (or MCP) detects loops from external sources
-    (i.e., misbehaving servers, external networking equipment running STP) and will err-disable the interface
-    on which ACI receives its own packet.
-    Fabric > Access Policies > Policies > Global Policies > MCP Instance Policy default
-  cisco.aci.aci_rest:
-    <<: *aci_login
-    path: /api/node/mo/uni/infra/mcpInstP-default.json
-    method: post
-    content:
-      mcpInstPol:
-        attributes:
-          ctrl: pdu-per-vlan
-          adminSt: "{{mcp}}"
-          key: "{{mcpPass}}"
-- name: |
-    Enable Domain Validations
-    verifies whether the VLAN used in an EPG matches the AEP configured
-    System > Fabric Wide Settings > Enforce Domain Validation
-    Disable Remote EP Learn
-    This will disable remote IP learning on border leaf switches
-    System > Fabric Wide Settings > Disable Remote EP Learning
-    Enforce Subnet Check
-    Ensures endpoints are only learned if they belong to bridge aci_aep_to_domain
-    System > System Settings > Fabric Wide Setting
-  cisco.aci.aci_rest:
-    <<: *aci_login
-    method: post
-    path: /api/node/mo/uni/infra/settings.json
-    content:
-      infraSetPol:
-        attributes:
-          unicastXrEpLearnDisable: "{{remoteEpLearning}}"
-          enforceSubnetCheck: "{{enforceSubnetCheck}}"
-          domainValidation: "{{domainValidation}}" 
-- name: |
-    Change forwarding profile to Ipv4. 
-    IPv4 Scale—enables systems with no IPv6 configurations to increase scalability to 48,000 IPv4 endpoints.
-    REQUIRES SWITCH REBOOT TO GO IN EFFECT*
-  cisco.aci.aci_rest:
-    <<: *aci_login
-    path: /api/node/mo/uni/infra/fwdscalepol-default.json
-    method: post
-    content:
-      topoctrlFwdScaleProfilePol:
-        attributes:
-          profType: ipv4
-  when: changeForwardingProfile
-- name: |
-    IP Aging should be enabled
-    If multiple IP's are learned on a single MAC, then as long as the MAC is active all IP's will stay learned
-    This setting will send an arp and if mac doesn't respond it will age out the MAC
-    System->System Settings->Enpoint Controls
-  cisco.aci.aci_rest:
-    <<: *aci_login
-    path: /api/node/mo/uni/infra/ipAgingP-default.json
-    method: post
-    content:
-      epIpAgingP:
-        attributes:
-          adminSt: "{{ipAging}}"
-- name: |
-    Rogue Endpoint Control
-    Creates a fault for mac flaps caused
-    System->System Settings->Enpoint Controls
-  cisco.aci.aci_rest:
-    <<: *aci_login
-    method: post
-    path: /api/node/mo/uni/infra/epCtrlP-default.json
-    content:
-      epControlP:
-        attributes:
-          adminSt: "{{rogueEpCtrl}}"
-- name: |
-    Strict COOP Policy
-    Forces MD5 authentication for communication to spine proxy
-    System->System Settings->COOP group
-  cisco.aci.aci_rest:
-    <<: *aci_login
-    method: post
-    path: /api/node/mo/uni/fabric/pol-default.json
-    content:
-      coopPol:
-        attributes:
-          type: strict
-  when: forceCoopAuth
-- name: |
-    Lower ISIS metric to {{isisMetric}} for redistributed routes
-    Fabric->Policies->Pod->ISIS Policy default
-  cisco.aci.aci_rest:
-    <<: *aci_login
-    method: post
-    path: /api/node/mo/uni/fabric/isisDomP-default.json
-    content:
-      isisDomPol:
-        attributes:
-          redistribMetric: "{{isisMetric}}"
-- name: |
-    Enable BFD on all layer 3 interfaces
-    Fabric->Fabric Policies->Policies->Interface->L3 Interface
-  cisco.aci.aci_rest:
-    <<: *aci_login
-    method: post
-    path: /api/node/mo/uni/fabric/l3IfP-default.json
-    content:
-      l3IfPol:
-        attributes:
-          bfdIsis: "{{bfd}}"
+- block:
+  - name: Create apic connection profile
+    set_fact:
+      login: &aci_login
+        host: "{{ ansible_host }}"
+        use_proxy: "{{ apic_proxy | default('no') }}"
+        validate_certs: "{{ apic_validate_certs | default('no') }}"
+        use_ssl: "{{ apic_use_ssl | default('yes') }}"
+        private_key: "{{ playbook_dir }}/{{ varprompt_private_key }}"
+        #certificate_name: admin
+      intentMap:
+        add: present
+        remove: absent
+  - name: |
+      MCP (per Vlan) should be enabled – MisCabling Protocol (or MCP) detects loops from external sources
+      (i.e., misbehaving servers, external networking equipment running STP) and will err-disable the interface
+      on which ACI receives its own packet.
+      Fabric > Access Policies > Policies > Global Policies > MCP Instance Policy default
+    cisco.aci.aci_rest:
+      <<: *aci_login
+      path: /api/node/mo/uni/infra/mcpInstP-default.json
+      method: post
+      content:
+        mcpInstPol:
+          attributes:
+            ctrl: pdu-per-vlan
+            adminSt: "{{ mcp }}"
+            key: "{{ mcpPass }}"
+  - name: |
+      Enable Domain Validations
+      verifies whether the VLAN used in an EPG matches the AEP configured
+      System > Fabric Wide Settings > Enforce Domain Validation
+      Disable Remote EP Learn
+      This will disable remote IP learning on border leaf switches
+      System > Fabric Wide Settings > Disable Remote EP Learning
+      Enforce Subnet Check
+      Ensures endpoints are only learned if they belong to bridge aci_aep_to_domain
+      System > System Settings > Fabric Wide Setting
+    cisco.aci.aci_rest:
+      <<: *aci_login
+      method: post
+      path: /api/node/mo/uni/infra/settings.json
+      content:
+        infraSetPol:
+          attributes:
+            unicastXrEpLearnDisable: "{{ remoteEpLearning }}"
+            enforceSubnetCheck: "{{ enforceSubnetCheck }}"
+            domainValidation: "{{ domainValidation }}"
+  - name: |
+      Change forwarding profile to Ipv4. 
+      IPv4 Scale—enables systems with no IPv6 configurations to increase scalability to 48,000 IPv4 endpoints.
+      REQUIRES SWITCH REBOOT TO GO IN EFFECT*
+    cisco.aci.aci_rest:
+      <<: *aci_login
+      path: /api/node/mo/uni/infra/fwdscalepol-default.json
+      method: post
+      content:
+        topoctrlFwdScaleProfilePol:
+          attributes:
+            profType: ipv4
+    when: changeForwardingProfile
+  - name: |
+      IP Aging should be enabled
+      If multiple IP's are learned on a single MAC, then as long as the MAC is active all IP's will stay learned
+      This setting will send an arp and if mac doesn't respond it will age out the MAC
+      System->System Settings->Enpoint Controls
+    cisco.aci.aci_rest:
+      <<: *aci_login
+      path: /api/node/mo/uni/infra/ipAgingP-default.json
+      method: post
+      content:
+        epIpAgingP:
+          attributes:
+            adminSt: "{{ ipAging }}"
+  - name: |
+      Rogue Endpoint Control
+      Creates a fault for mac flaps caused
+      System->System Settings->Enpoint Controls
+    cisco.aci.aci_rest:
+      <<: *aci_login
+      method: post
+      path: /api/node/mo/uni/infra/epCtrlP-default.json
+      content:
+        epControlP:
+          attributes:
+            adminSt: "{{ rogueEpCtrl }}"
+  - name: |
+      Strict COOP Policy
+      Forces MD5 authentication for communication to spine proxy
+      System->System Settings->COOP group
+    cisco.aci.aci_rest:
+      <<: *aci_login
+      method: post
+      path: /api/node/mo/uni/fabric/pol-default.json
+      content:
+        coopPol:
+          attributes:
+            type: strict
+    when: forceCoopAuth
+  - name: |
+      Lower ISIS metric to {{ isisMetric }} for redistributed routes
+      This resolves blackhole of traffic during spine reboots
+      Fabric->Fabric Policies->Policies->Pod->ISIS Policy default
+    cisco.aci.aci_rest:
+      <<: *aci_login
+      method: post
+      path: /api/node/mo/uni/fabric/isisDomP-default.json
+      content:
+        isisDomPol:
+          attributes:
+            redistribMetric: "{{ isisMetric }}"
+  - name: |
+      "{{ intent }} BFD on all layer 3 interfaces
+      BFD allows subsecond failure due to link failure
+      Fabric->Fabric Policies->Policies->Interface->L3 Interface"
+    cisco.aci.aci_rest:
+      <<: *aci_login
+      method: post
+      path: /api/node/mo/uni/fabric/l3IfP-default.json
+      content:
+        l3IfPol:
+          attributes:
+            bfdIsis: "{{ bfd }}"
+  when: intent == 'add'
