@@ -1,4 +1,7 @@
-leafStart: 101
-leafEnd: 104
-#leaf switch that have fexs attached.  comment out or make emtpy []
+leafStart:
+#leafStart: 101
+leafEnd:
+#leafEnd: 102
+
+#leaf switch that have fexs attached
 fexLeaf: []

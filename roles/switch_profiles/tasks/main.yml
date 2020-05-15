@@ -1,4 +1,10 @@
 ---
+- name: Verify variables are properly filled out
+  assert:
+    that:
+      - leafStart
+      - leafEnd
+    quiet: yes
 - name: Create apic connection profile
   set_fact:
     login: &aci_login
