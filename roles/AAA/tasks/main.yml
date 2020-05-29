@@ -1,0 +1,21 @@
+---
+- block:
+  - name: Create apic connection profile
+    set_fact:
+      login: &aci_login
+        host: "{{ ansible_host }}"
+        use_proxy: "{{ apic_proxy | default('no') }}"
+        validate_certs: "{{ apic_validate_certs | default('no') }}"
+        use_ssl: "{{ apic_use_ssl | default('yes') }}"
+        private_key: "{{ playbook_dir }}/{{ varprompt_private_key }}"
+        #certificate_name: admin
+      intentMap:
+        add: present
+        remove: absent
+
+  - name: Configure Radius
+    include_tasks: "radius.yml"
+  when: extAuthMethod == "radius"
+- name: How to use local auth
+  debug:
+    msg: "To use local auth use format apic:fallback\\username in userID space"

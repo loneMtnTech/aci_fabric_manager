@@ -1,0 +1,7 @@
+---
+#Options are radius,ldap,tacacs,saml,rsa
+extAuthMethod:
+oobEpg: "default"
+radiusSrvs: []
+radiusAuthProtocol: pap #pap,chap,ms-chap
+radiusPwd: "" #Radius share key
