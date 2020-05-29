@@ -6,11 +6,11 @@ It is an opinonated framework that can help you acheive a well deployed fabric a
 
 ## Features
 
- * Creates vlan pools, domains, aeps and connects them based on your variable set. [See Role](https://github.com/loneMtnTech/aci_fabric_policies/tree/master/roles/domains_pools_aeps)
- * Creates Switch,Int and Fex Profiles.  [See Role](https://github.com/loneMtnTech/aci_fabric_policies/tree/master/roles/switch_profiles)
- * Creates Interface policies and groups .  [See Role](https://github.com/loneMtnTech/aci_fabric_policies/tree/master/roles/interface_policies)
- * Enable global best practice settings. [See Role](https://github.com/loneMtnTech/aci_fabric_policies/tree/master/roles/global_settings)
- * Configure dns,ntp,bgp for fabric. [See Role](https://github.com/loneMtnTech/aci_fabric_policies/tree/master/roles/fabric_basics)
+ * Creates vlan pools, domains, aeps and connects them based on your variable set. [See Role](https://github.com/loneMtnTech/aci_fabric_manager/tree/master/roles/domains_pools_aeps)
+ * Creates Switch,Int and Fex Profiles.  [See Role](https://github.com/loneMtnTech/aci_fabric_manager/tree/master/roles/switch_profiles)
+ * Creates Interface policies and groups .  [See Role](https://github.com/loneMtnTech/aci_fabric_manager/tree/master/roles/interface_policies)
+ * Enable global best practice settings. [See Role](https://github.com/loneMtnTech/aci_fabric_manager/tree/master/roles/global_settings)
+ * Configure dns,ntp,bgp for fabric. [See Role](https://github.com/loneMtnTech/aci_fabric_manager/tree/master/roles/fabric_basics)
 
 ## Requirements
 * ansible v2.9 or later
@@ -24,13 +24,13 @@ It is an opinonated framework that can help you acheive a well deployed fabric a
 
 Installation via galaxy.  Use --force to upgrade to latest version
 
-```ansible-galaxy collection install lonemtntech.aci_fabric_policies```
+```ansible-galaxy collection install lonemtntech.aci_fabric_manager```
 
 ## Variables
 
 **Required Variable**
 
-* **intent**(str: *add/remove* default: add) - controls if infrastructure is deployed or deleted.  
+* intent(str: *add/remove* default: add) - controls if infrastructure is deployed or deleted.  
 * **varprompt_private_key**(str) - path to authentication certificate
     * should name as *username.key* where username is your aci user acount
     * place in same directory as your root playbook or specify the path in the variable
@@ -41,14 +41,12 @@ Installation via galaxy.  Use --force to upgrade to latest version
 
 ## Deployment
 
-**Please test against a sandbox**
-
 example playbook
 
 ```
 - hosts: apic
   collections:
-  - lonemtntech.aci_fabric_policies
+  - lonemtntech.aci_fabric_manager
   gather_facts: no
   vars_prompt:
     - name: intent
@@ -126,6 +124,6 @@ domains:
     *prodVlanPool
 ```
 
-## [Examples](https://github.com/loneMtnTech/aci_fabric_policies/tree/master/examples)
+## [Examples](https://github.com/loneMtnTech/aci_fabric_manager/tree/master/examples)
 
 

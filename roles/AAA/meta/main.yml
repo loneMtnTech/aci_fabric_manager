@@ -1,5 +1,5 @@
 galaxy_info:
-  role_name: AAA
+  role_name: aaa
   author: Jason Bullen
   description: Configure external authentication for cisco aci
 

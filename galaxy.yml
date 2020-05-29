@@ -9,7 +9,7 @@ namespace: lonemtntech
 name: aci_fabric_manager
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 1.0.4
+version: 1.0.5
 
 # The path to the Markdown (.md) readme file. This path is relative to the root of the collection
 readme: README.md
@@ -46,7 +46,7 @@ dependencies:
   cisco.aci: '>=0.0.6'
 
 # The URL of the originating SCM repository
-repository: https://github.com/loneMtnTech/aci_fabric_policies
+repository: https://github.com/loneMtnTech/aci_fabric_manager
 
 # The URL to any online docs
 #documentation: http://docs.example.com
@@ -55,4 +55,4 @@ repository: https://github.com/loneMtnTech/aci_fabric_policies
 #homepage: http://example.com
 
 # The URL to the collection issue tracker
-issues: https://github.com/loneMtnTech/aci_fabric_policies
+issues: https://github.com/loneMtnTech/aci_fabric_manager
