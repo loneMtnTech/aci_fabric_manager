@@ -6,11 +6,11 @@ It is an opinonated framework that can help you acheive a well deployed fabric a
 
 ## Features
 
-### * Creates your vlan pools, domains, aeps and connects them based on your variable set. [See Role](https://github.com/loneMtnTech/aci_fabric_policies/tree/master/roles/domains_pools_aeps)
-### * Creates your Switch,Int and Fex Profiles.  [See Role](https://github.com/loneMtnTech/aci_fabric_policies/tree/master/roles/switch_profiles)
-### * Creates your Interface policies and groups .  [See Role](https://github.com/loneMtnTech/aci_fabric_policies/tree/master/roles/interface_policies)
-### * Enable global best practice settings. [See Role](https://github.com/loneMtnTech/aci_fabric_policies/tree/master/roles/global_settings)
-### * Configure dns,ntp,bgp for fabric. [See Role](https://github.com/loneMtnTech/aci_fabric_policies/tree/master/roles/fabric_basics)
+ * Creates vlan pools, domains, aeps and connects them based on your variable set. [See Role](https://github.com/loneMtnTech/aci_fabric_policies/tree/master/roles/domains_pools_aeps)
+ * Creates Switch,Int and Fex Profiles.  [See Role](https://github.com/loneMtnTech/aci_fabric_policies/tree/master/roles/switch_profiles)
+ * Creates Interface policies and groups .  [See Role](https://github.com/loneMtnTech/aci_fabric_policies/tree/master/roles/interface_policies)
+ * Enable global best practice settings. [See Role](https://github.com/loneMtnTech/aci_fabric_policies/tree/master/roles/global_settings)
+ * Configure dns,ntp,bgp for fabric. [See Role](https://github.com/loneMtnTech/aci_fabric_policies/tree/master/roles/fabric_basics)
 
 ## Requirements
 * ansible v2.9 or later

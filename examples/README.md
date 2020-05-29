@@ -3,7 +3,7 @@ The framework deploys one of the most common, but not  only, types of access top
 
 ![concept](../images/fabric_policies.JPG)
 
-#### Below depicts deployment with a leaf range of 101-106
+#### Below depicts deployment with a leaf range of 101-106 with FEXs on 101 and 103
 
 ![Switch and Interface Profiles](../images/switch_profiles.JPG)
 
