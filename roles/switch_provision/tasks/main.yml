@@ -1,0 +1,38 @@
+---
+- block:  
+  - name: Verify proper varibles
+    assert:
+      that:
+      - item.name
+      - item.serial
+      - item.nodeId
+      - item.role
+      - item.podId
+      quiet: true
+    loop: "{{ switches }}"
+  - name: Create apic connection profile
+    set_fact:
+      login: &aci_login
+        host: "{{ ansible_host }}"
+        use_proxy: "{{ apic_proxy | default('no') }}"
+        validate_certs: "{{ apic_validate_certs | default('no') }}"
+        use_ssl: "{{ apic_use_ssl | default('yes') }}"
+        private_key: "{{ playbook_dir }}/{{ varprompt_private_key }}"
+  - name: Pre-Provision switches
+    aci_rest:
+      <<: *aci_login
+      method: post
+      path: "/api/node/mo/uni/controller/nodeidentpol/nodep-{{ item.serial }}.json"
+      content:
+        fabricNodeIdentP:
+          attributes:
+            name: "{{ item.name }}"
+            serial: "{{ item.serial }}"
+            nodeId: "{{ item.nodeId }}"
+            role: "{{ item.role }}"
+            podId: "{{ item.podId }}"
+    loop: "{{ switches }}"
+    loop_control:
+      label: "Registering switch {{ item.name }}"
+  when: switches
+

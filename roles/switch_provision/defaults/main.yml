@@ -1,0 +1,12 @@
+---
+#switches:
+#- name: leaf101
+#  serial: ""
+#  nodeId: "101"
+#  role: leaf
+#  podId: "1"
+#- name: spine200
+#  serial: ""
+#  nodeId: "200"
+#  role: spine
+#  podId: "1"

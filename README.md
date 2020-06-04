@@ -11,6 +11,7 @@ It is an opinonated framework that can help you acheive a well deployed fabric a
  * Creates Interface policies and groups .  [See Role](https://github.com/loneMtnTech/aci_fabric_manager/tree/master/roles/interface_policies)
  * Enable global best practice settings. [See Role](https://github.com/loneMtnTech/aci_fabric_manager/tree/master/roles/global_settings)
  * Configure dns,ntp,bgp for fabric. [See Role](https://github.com/loneMtnTech/aci_fabric_manager/tree/master/roles/fabric_basics)
+ * Prestage switch IDs. [See Role](https://github.com/loneMtnTech/aci_fabric_manager/tree/master/roles/switch_provision)
 
 ## Requirements
 * ansible v2.9 or later
@@ -43,7 +44,7 @@ Installation via galaxy.  Use --force to upgrade to latest version
 
 example playbook
 
-```
+```yaml
 - hosts: apic
   collections:
   - lonemtntech.aci_fabric_manager
@@ -62,37 +63,8 @@ example playbook
   - role: switch_profiles
   - role: global_settings
   - role: fabric_basics
+  - role: switch_provision
 ```
-## Role Dependencies
-
-You may only run specific roles.  Any dependencies will be listed here
-
-<table>
-<tr>
-<th>Role</th>
-<th>Depends On</th>
-</tr>
-<tr>
-<td>domains_pools_aeps</td>
-<td>None</td>
-</tr>
-<tr>
-<td>fabric_basics</td>
-<td>None</td>
-</tr>
-<tr>
-<td>global_settings</td>
-<td>None</td>
-</tr>
-<tr>
-<td>interface_policies</td>
-<td>None</td>
-</tr>
-<tr>
-<td>switch_profiles</td>
-<td>None</td>
-</tr>
-</table>
 
 ## Configuration
 
