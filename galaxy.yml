@@ -43,7 +43,7 @@ tags: ['cisco','aci','networking']
 # L(specifiers,https://python-semanticversion.readthedocs.io/en/latest/#requirement-specification). Multiple version
 # range specifiers can be set and are separated by ','
 dependencies:
-  cisco.aci: '>=0.0.6'
+  cisco.aci: '>=2.13.0'
 
 # The URL of the originating SCM repository
 repository: https://github.com/loneMtnTech/aci_fabric_manager
